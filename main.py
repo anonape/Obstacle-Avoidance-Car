@@ -9,9 +9,9 @@ try:
 
     while True:
         # Capture frame-by-frame
-        arduino_servo.rotate(arduino, newSum)
+        connectArduino.sendCommand(arduino, command)
 
-    arduino_servo.disconnect(arduino)
+    connectArduino.disconnect(arduino)
 
 except Exception:
     traceback.print_exc()
