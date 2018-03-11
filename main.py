@@ -14,7 +14,7 @@ try:
         key = cv.waitKey(1) & 0xFF
         #PYRO:obj_dbc143cf36bf43f186bf0f881f06e17e@localhost:61773
         uri = input("What is the Pyro URI of the greeting object?").strip()
-        name = input()
+        name = input("What is the name?")
         # Capture frame-by-frame
         connectArduino.sendCommand(arduino, key)
 
