@@ -27,9 +27,11 @@ Development environment specifics:
 const int offsetA = 1;
 const int offsetB = -1;
 
-const int trigPin = 12;
-const int echoPin = 11;
-
+//const int trigPin = 12;
+//const int echoPin = 11;
+const int out=12;
+const int in=11;
+int i = 0;
 // Initializing motors.  The library will allow you to initialize as many
 // motors as you have memory for.  If you are using functions like forward
 // that take 2 motors as arguements you can either write new functions or
@@ -41,67 +43,67 @@ void setup()
 {
    Serial.begin(9600);
    boolean driving = false;
+   pinMode(in, INPUT); //remember: the Echo pin is the microphone pin
+   pinMode(out, OUTPUT); //remember: the Trig pin is the speaker pin
 }
 
 
 void loop()
 {
+  
  // establish variables for duration of the ping, 
   // and the distance result in inches and centimeters:
-  long duration, cm;
+  long dur;
+  long dis;
+  long cm;
 
-  // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
-  // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
-  pinMode(trigPin, OUTPUT);
-  digitalWrite(trigPin, LOW);
+  digitalWrite(out,LOW);
   delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
+
+  digitalWrite(out,HIGH);
   delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+  digitalWrite(out,LOW);
 
-  // Read the signal from the sensor: a HIGH pulse whose
-  // duration is the time (in microseconds) from the sending
-  // of the ping to the reception of its echo off of an object.
-  pinMode(echoPin, INPUT);
-  duration = pulseIn(echoPin, HIGH);
+  dur=pulseIn(in,HIGH);
 
-  // convert the time into a distance
-  cm = microsecondsToCentimeters(duration);
-  
-//  Serial.println(duration);
-  Serial.println(cm);
 
+  cm = microsecondsToCentimeters(dur);
   if (cm < 5) {
     left(motor1, motor2, 255);
-    delay(100);          
+    delay(300);          
   } else {
     forward(motor1, motor2, 255);
   }
-  
-//  
-//  Serial.write(cm);
+  Serial.println(String(cm));
   delay(1000);
 
-  if (Serial.available()) {
-    
-    String str = Serial.readStringUntil('\n');
-    char compass = str[0];
-    Serial.println(compass);
-    
-    if (compass == 'L') {
-      left(motor1, motor2, 100);          
-    } else if (compass == 'R') {
-     right(motor1, motor2, 100);
-    } else if (compass == 'F') {
-      forward(motor1, motor2, 100);
-    } else if (compass == 'B') {
-      forward(motor1, motor2, -100);    
-    } else if (compass = 'S') {
-      brake(motor1, motor2);
-    }
-  }
-}
+//
 
+//  
+//  
+//  Serial.write(cm);
+//  delay(1000);
+
+//  if (Serial.available()) {
+//    
+//    String str = Serial.readStringUntil('\n');
+//    char compass = str[0];
+//    Serial.println(compass);
+//    
+//    if (compass == 'L') {
+//      left(motor1, motor2, 100);          
+//    } else if (compass == 'R') {
+//     right(motor1, motor2, 100);
+//    } else if (compass == 'F') {
+//      forward(motor1, motor2, 100);
+//    } else if (compass == 'B') {
+//      forward(motor1, motor2, -100);    
+//    } else if (compass = 'S') {
+//      brake(motor1, motor2);
+//    }
+//  }
+//}
+}
 long microsecondsToCentimeters(long microseconds)
 {
   // The speed of sound is 340 m/s or 29 microseconds per centimeter.
