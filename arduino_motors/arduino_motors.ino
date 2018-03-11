@@ -1,51 +1,74 @@
+//motor A connected between A01 and A02
+//motor B connected between B01 and B02
 
-/*  Arduino DC Motor Control - PWM | H-Bridge | L298N  -  Example 01
+int STBY = 10; //standby
 
-    by Dejan Nedelkovski, www.HowToMechatronics.com
-*/
+//Motor A
+int PWMA = 3; //Speed control
+int AIN1 = 9; //Direction
+int AIN2 = 8; //Direction
 
-#define enA 9
-#define in1 6
-#define in2 7
-#define button 4
+//Motor B
+int PWMB = 5; //Speed control
+int BIN1 = 11; //Direction
+int BIN2 = 12; //Direction
 
-int rotDirection = 0;
-int pressed = false;
+void setup(){
+pinMode(STBY, OUTPUT);
 
-void setup() {
-  pinMode(enA, OUTPUT);
-  pinMode(in1, OUTPUT);
-  pinMode(in2, OUTPUT);
-  pinMode(button, INPUT);
-  // Set initial rotation direction
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, HIGH);
+pinMode(PWMA, OUTPUT);
+pinMode(AIN1, OUTPUT);
+pinMode(AIN2, OUTPUT);
+
+pinMode(PWMB, OUTPUT);
+pinMode(BIN1, OUTPUT);
+pinMode(BIN2, OUTPUT);
 }
 
-void loop() {
-  int potValue = analogRead(A0); // Read potentiometer value
-  int pwmOutput = map(potValue, 0, 1023, 0 , 255); // Map the potentiometer value from 0 to 255
-  analogWrite(enA, pwmOutput); // Send PWM signal to L298N Enable pin
+void loop(){
+move(1, 255, 1); //motor 1, full speed, left
+move(2, 255, 1); //motor 2, full speed, left
 
-  // Read button - Debounce
-  if (digitalRead(button) == true) {
-    pressed = !pressed;
-  }
-  while (digitalRead(button) == true);
-  delay(20);
+delay(1000); //go for 1 second
+stop(); //stop
+delay(250); //hold for 250ms until move again
 
-  // If button is pressed - change rotation direction
-  if (pressed == true  & rotDirection == 0) {
-    digitalWrite(in1, HIGH);
-    digitalWrite(in2, LOW);
-    rotDirection = 1;
-    delay(20);
-  }
-  // If button is pressed - change rotation direction
-  if (pressed == false & rotDirection == 1) {
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, HIGH);
-    rotDirection = 0;
-    delay(20);
-  }
+move(1, 128, 0); //motor 1, half speed, right
+move(2, 128, 0); //motor 2, half speed, right
+
+delay(1000);
+stop();
+delay(250);
+}
+
+void move(int motor, int speed, int direction){
+//Move specific motor at speed and direction
+//motor: 0 for B 1 for A
+//speed: 0 is off, and 255 is full speed
+//direction: 0 clockwise, 1 counter-clockwise
+
+digitalWrite(STBY, HIGH); //disable standby
+
+boolean inPin1 = LOW;
+boolean inPin2 = HIGH;
+
+if(direction == 1){
+inPin1 = HIGH;
+inPin2 = LOW;
+}
+
+if(motor == 1){
+digitalWrite(AIN1, inPin1);
+digitalWrite(AIN2, inPin2);
+analogWrite(PWMA, speed);
+}else{
+digitalWrite(BIN1, inPin1);
+digitalWrite(BIN2, inPin2);
+analogWrite(PWMB, speed);
+}
+}
+
+void stop(){
+//enable standby
+digitalWrite(STBY, LOW);
 }

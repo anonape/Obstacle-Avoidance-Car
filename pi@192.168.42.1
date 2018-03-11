@@ -5,20 +5,11 @@ arduino = None
 
 def sendCommand(arduino, command):
     # print(direction)
-    if command == 0:
-        arduino.write(("F\n").encode())
-
-    elif command == 1:
-        arduino.write(("D\n").encode())
-
-    elif command == 3:
-        arduino.write(("R\n").encode())
-
-    elif command == 2:
+    if command > 0:
         arduino.write(("L\n").encode())
 
-    elif command == 27:     # stop
-        arduino.write(("S\n").encode())
+    elif command < 0:
+        arduino.write(("R\n").encode())
 
 def connect(port = '/dev/cu.usbserial-DN01DQRE'):
     global arduino
